@@ -59,8 +59,7 @@ localparam IDLE = 3'b000,
                     fetcher_state<=IDLE
                 end 
                 end
-            end
             endcase
         end
-    end
+        end
 endmodule
