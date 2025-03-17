@@ -10,7 +10,7 @@ module controller #(
 )(
     input wire clk,
     input wire reset,
-
+    
     input 
 );
 
