@@ -41,7 +41,7 @@ module controller #(
     reg [$clog2(NUM_CONSUMERS)-1:0] current_consumer [NUM_CHANNELS-1:0];
     reg [NUM_CONSUMERS-1:0] channel_serving_consumer;
 
-    always(posedge clk) begin
+    always@(posedge clk) begin
         if(reset) begin
             mem_read_valid<=0;
             mem_read_address<=0;
