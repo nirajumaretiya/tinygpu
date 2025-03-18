@@ -144,10 +144,66 @@ module core #(
 
            // LSU
            lsu lsu_inst(
-            
+            .clk(clk),
+            .reset(reset),
+            .enable(i<thread_count),
+            .core_state(core_state),
+            .decoded_mem_read_enable(decoded_mem_read_enable),
+            .decoded_mem_write_enable(decoded_mem_write_enable),
+            .mem_read_valid(data_mem_read_valid[i]),
+            .mem_read_address(data_mem_read_address[i]),
+            .mem_read_ready(data_mem_read_ready[i]),
+            .mem_read_data(data_mem_read_data[i]),
+            .mem_write_valid(data_mem_write_valid[i]),
+            .mem_write_address(data_mem_write_address[i]),
+            .mem_write_data(data_mem_write_data[i]),
+            .mem_write_ready(data_mem_write_ready[i]),
+            .rs(rs[i]),
+            .rt(rt[i]),
+            .lsu_state(lsu_state[i]),
+            .lsu_out(lsu_out[i])
            );
 
-        end
+           // register file
+           registers #(
+                .THREADS_PER_BLOCK(THREADS_PER_BLOCK),
+                .THREAD_ID(i),
+                .DATA_BITS(DATA_MEM_DATA_BITS),
+            ) register_instance (
+                .clk(clk),
+                .reset(reset),
+                .enable(i < thread_count),
+                .block_id(block_id),
+                .core_state(core_state),
+                .decoded_reg_write_enable(decoded_reg_write_enable),
+                .decoded_reg_input_mux(decoded_reg_input_mux),
+                .decoded_rd_address(decoded_rd_address),
+                .decoded_rs_address(decoded_rs_address),
+                .decoded_rt_address(decoded_rt_address),
+                .decoded_immediate(decoded_immediate),
+                .alu_out(alu_out[i]),
+                .lsu_out(lsu_out[i]),
+                .rs(rs[i]),
+                .rt(rt[i])
+            );
+
+            // program counter
+            pc #(
+                .DATA_MEM_DATA_BITS(DATA_MEM_DATA_BITS),
+                .PROGRAM_MEM_ADDR_BITS(PROGRAM_MEM_ADDR_BITS)
+            ) pc_instance (
+                .clk(clk),
+                .reset(reset),
+                .enable(i < thread_count),
+                .core_state(core_state),
+                .decoded_nzp(decoded_nzp),
+                .decoded_immediate(decoded_immediate),
+                .decoded_nzp_write_enable(decoded_nzp_write_enable),
+                .decoded_pc_mux(decoded_pc_mux),
+                .alu_out(alu_out[i]),
+                .current_pc(current_pc),
+                .next_pc(next_pc[i])
+            );
         end
     endgenerate
 
