@@ -38,9 +38,51 @@ module dispatch#(
             blocks_dispatched<=0;
             blocks_done<=0;
             start_execution<=0;
+
+            for(int i=0;i<NUM_CORES;i=i+1) begin
+                core_start[i]<=0;
+                core_reset[i]<=0;
+                core_block_id[i]<=0;
+                core_thread_count[i]<=THREADS_PER_BLOCK;
+            end
         end
+        else if(start) begin
+            if(!start_execution) begin
+                start_execution<=1;
+                for(int i=0;i<NUM_CORES;i=i+1) begin
+                    core_reset[i]<=1;
+                end
+            end
 
+            // if all blocks are completed
+            if(blocks_done==total_blocks) begin
+                done<=1;
+            end
 
+            for(int i=0;i<NUM_CORES;i=i+1) begin
+                if(core_reset[i]) begin
+                    core_reset[i]=0;
+
+                    // if this core was just reset, check if there are more blocks to dispatched
+                    if(blocks_dispatched<total_blocks) begin
+                        core_start[i]<=1;
+                        core_block_id[i]<=blocks_dispatched;
+                        core_thread_count[i]<=(blocks_dispatched==total_blocks-1)?(thread_count-(blocks_dispatched*THREADS_PER_BLOCK)):THREADS_PER_BLOCK;
+
+                        blocks_dispatched=blocks_dispatched+1;
+                    end
+                end
+            end
+
+            for(int i=0;i<NUM_CORES;i=i+1) begin
+                if(core_start[i] && core_done[i]) begin
+                    // if a core just executed a block then reset it
+                    core_reset[i]<=1;
+                    core_start[i]<=0;
+                    blocks_done=blocks_done+1;
+                end
+            end
+        end
     end
 endmodule
 
