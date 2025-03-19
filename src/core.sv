@@ -4,7 +4,7 @@
 module core #(
     parameter DATA_MEM_ADDR_BITS=8,
     parameter DATA_MEM_DATA_BITS=8,
-    parameter PROFRAM_MEM_ADDR_BITS=8,
+    parameter PROGRAM_MEM_ADDR_BITS=8,
     parameter PROGRAM_MEM_DATA_BITS=16,
     parameter THREADS_PER_BLOCK=4
 )(
@@ -143,29 +143,29 @@ module core #(
            );
 
            // LSU
-           lsu lsu_inst(
-            .clk(clk),
-            .reset(reset),
-            .enable(i<thread_count),
-            .core_state(core_state),
-            .decoded_mem_read_enable(decoded_mem_read_enable),
-            .decoded_mem_write_enable(decoded_mem_write_enable),
-            .mem_read_valid(data_mem_read_valid[i]),
-            .mem_read_address(data_mem_read_address[i]),
-            .mem_read_ready(data_mem_read_ready[i]),
-            .mem_read_data(data_mem_read_data[i]),
-            .mem_write_valid(data_mem_write_valid[i]),
-            .mem_write_address(data_mem_write_address[i]),
-            .mem_write_data(data_mem_write_data[i]),
-            .mem_write_ready(data_mem_write_ready[i]),
-            .rs(rs[i]),
-            .rt(rt[i]),
-            .lsu_state(lsu_state[i]),
-            .lsu_out(lsu_out[i])
-           );
+           lsu lsu_instance (
+                .clk(clk),
+                .reset(reset),
+                .enable(i < thread_count),
+                .core_state(core_state),
+                .decoded_mem_read_enable(decoded_mem_read_enable),
+                .decoded_mem_write_enable(decoded_mem_write_enable),
+                .mem_read_valid(data_mem_read_valid[i]),
+                .mem_read_address(data_mem_read_address[i]),
+                .mem_read_ready(data_mem_read_ready[i]),
+                .mem_read_data(data_mem_read_data[i]),
+                .mem_write_valid(data_mem_write_valid[i]),
+                .mem_write_address(data_mem_write_address[i]),
+                .mem_write_data(data_mem_write_data[i]),
+                .mem_write_ready(data_mem_write_ready[i]),
+                .rs(rs[i]),
+                .rt(rt[i]),
+                .lsu_state(lsu_state[i]),
+                .lsu_out(lsu_out[i])
+            );
 
-           // register file
-           registers #(
+            // Register File
+            registers #(
                 .THREADS_PER_BLOCK(THREADS_PER_BLOCK),
                 .THREAD_ID(i),
                 .DATA_BITS(DATA_MEM_DATA_BITS),
@@ -187,7 +187,7 @@ module core #(
                 .rt(rt[i])
             );
 
-            // program counter
+            // Program Counter
             pc #(
                 .DATA_MEM_DATA_BITS(DATA_MEM_DATA_BITS),
                 .PROGRAM_MEM_ADDR_BITS(PROGRAM_MEM_ADDR_BITS)
@@ -206,5 +206,4 @@ module core #(
             );
         end
     endgenerate
-
 endmodule
