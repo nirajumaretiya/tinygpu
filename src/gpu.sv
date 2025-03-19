@@ -22,7 +22,7 @@ module gpu #(
 
     // kernel execution
     input wire start,
-    input wire done,
+    output wire done,
 
     // device control register
     input wire device_control_write_enable,
@@ -32,7 +32,7 @@ module gpu #(
     output wire [PROGRAM_MEM_NUM_CHANNELS-1:0] program_mem_read_valid,
     output wire [PROGRAM_MEM_ADDR_BITS-1:0] program_mem_read_address [PROGRAM_MEM_NUM_CHANNELS-1:0],
     input wire [PROGRAM_MEM_NUM_CHANNELS-1:0] program_mem_read_ready,
-    input wire [PROGRAM_MEM_DATA_BITS-1:0] progsram_mem_read_data [PROGRAM_MEM_NUM_CHANNELS-1:0],
+    input wire [PROGRAM_MEM_DATA_BITS-1:0] program_mem_read_data [PROGRAM_MEM_NUM_CHANNELS-1:0],
 
     // data memory
     output wire [DATA_MEM_NUM_CHANNELS-1:0] data_mem_read_valid,
@@ -80,7 +80,7 @@ module gpu #(
         .device_control_write_enable(device_control_write_enable),
         .device_control_data(device_control_data),
         .thread_count(thread_count)
-    )
+    );
 
     // data memory controller
     controller #(
@@ -88,7 +88,7 @@ module gpu #(
         .DATA_BITS(DATA_MEM_DATA_BITS),
         .NUM_CONSUMERS(NUM_LSUS),
         .NUM_CHANNELS(DATA_MEM_NUM_CHANNELS)
-    )(
+    ) data_memory_controller (
         .clk(clk),
         .reset(reset),
         .consumer_read_valid(lsu_read_valid),
@@ -187,7 +187,7 @@ module gpu #(
                 .DATA_MEM_DATA_BITS(DATA_MEM_DATA_BITS),
                 .PROGRAM_MEM_ADDR_BITS(PROGRAM_MEM_ADDR_BITS),
                 .PROGRAM_MEM_DATA_BITS(PROGRAM_MEM_DATA_BITS),
-                .THREADS_PER_BLOCK(THREADS_PER_BLOCK),
+                .THREADS_PER_BLOCK(THREADS_PER_BLOCK)
             ) core_instance (
                 .clk(clk),
                 .reset(core_reset[i]),

@@ -31,7 +31,7 @@ module scheduler #(
     input reg [1:0] lsu_state [THREADS_PER_BLOCK-1:0],
 
     // current and next pc
-    output reg [7:0] current_pc;
+    output reg [7:0] current_pc,
     input reg [7:0] next_pc [THREADS_PER_BLOCK-1:0],
 
     // execution state
@@ -45,7 +45,7 @@ module scheduler #(
             REQUEST = 3'b011,
             WAIT = 3'b100,
             EXECUTE = 3'b101,
-            UPDATE = 3'b110;
+            UPDATE = 3'b110,
             DONE = 3'b111;
     
     always @(posedge clk) begin
@@ -64,7 +64,7 @@ module scheduler #(
                 end
                 FETCH:begin
                     if(fetcher_state==3'b010) begin
-                        core_state<=REQUEST;    
+                        core_state<=DECODE;    
                     end
                 end
                 DECODE:begin
@@ -102,7 +102,7 @@ module scheduler #(
                     end
                     else begin
                         // TODO: Branch divergence. For now assume all next_pc converge
-                        current_pc<=next_pc[THREADS_PER_BLOCK-1:0];
+                        current_pc<=next_pc[THREADS_PER_BLOCK-1];
                         // synchronous update
                         core_state<=FETCH;
                     end

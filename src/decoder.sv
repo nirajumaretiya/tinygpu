@@ -12,7 +12,7 @@ module decoder(
     input reg [15:0] instruction,
 
     //Instruction signals 
-    output reg[3:0] decoded_rd_address.
+    output reg[3:0] decoded_rd_address,
     output reg[3:0] decoded_rs_address,
     output reg[3:0] decoded_rt_address,
     output reg[2:0] decoded_nzp,
@@ -24,7 +24,7 @@ module decoder(
     output reg decoded_mem_write_enable,            // Enable write to memory
     output reg decoded_nzp_write_enable,            // Enable write to nzp register
     output reg [1:0] decoded_reg_input_mux,         // Select input for register file
-    output reg [1:0] decoded_reg_arithmetic_mux,    // Select input for ALU
+    output reg [1:0] decoded_alu_arithmetic_mux,    // Select input for ALU
     output reg decoded_alu_output_mux,              // Select output for ALU
     output reg decoded_pc_mux,                      // Select input for PC
 
@@ -56,7 +56,7 @@ module decoder(
             decoded_mem_write_enable<=0;
             decoded_nzp_write_enable<=0;
             decoded_reg_input_mux<=0;
-            decoded_reg_arithmetic_mux<=0;
+            decoded_alu_arithmetic_mux<=0;
             decoded_alu_output_mux<=0;
             decoded_pc_mux<=0;
             decoded_ret<=0;
@@ -77,7 +77,7 @@ module decoder(
                 decoded_mem_write_enable<=0;
                 decoded_nzp_write_enable<=0;
                 decoded_reg_input_mux<=0;
-                decoded_reg_arithmetic_mux<=0;
+                decoded_alu_arithmetic_mux<=0;
                 decoded_alu_output_mux<=0;
                 decoded_pc_mux<=0;
                 decoded_ret<=0;
@@ -97,22 +97,22 @@ module decoder(
                     ADD:begin
                         decoded_reg_write_enable<=1;
                         decoded_reg_input_mux<=2'b00;
-                        decoded_reg_arithmetic_mux<=2'b00;
+                        decoded_alu_arithmetic_mux<=2'b00;
                     end
                     SUB:begin
                         decoded_reg_write_enable<=1;
                         decoded_reg_input_mux<=2'b00;
-                        decoded_reg_arithmetic_mux<=2'b01;
+                        decoded_alu_arithmetic_mux<=2'b01;
                     end
                     MUL:begin
                         decoded_reg_write_enable<=1;
-                        decodeADDd_reg_input_mux<=2'b00;
-                        decoded_reg_arithmetic_mux<=2'b10;
+                        decoded_reg_input_mux<=2'b00;
+                        decoded_alu_arithmetic_mux<=2'b10;
                     end
                     DIV:begin
                         decoded_reg_write_enable<=1;
                         decoded_reg_input_mux<=2'b00;
-                        decoded_reg_arithmetic_mux<=2'b11;
+                        decoded_alu_arithmetic_mux<=2'b11;
                     end
                     LDR:begin
                         decoded_reg_write_enable<=1;

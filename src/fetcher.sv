@@ -56,10 +56,10 @@ localparam IDLE = 3'b000,
             end
             FETCHED:begin
                 if(core_state==3'b010) begin // reset when core_state=DECODE
-                    fetcher_state<=IDLE
+                    fetcher_state<=IDLE;
                 end 
-                end
+            end
             endcase
         end
-        end
+    end
 endmodule

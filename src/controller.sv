@@ -22,22 +22,22 @@ module controller #(
     output reg [NUM_CONSUMERS-1:0] consumer_write_ready,
 
     //memory interface
-    output reg [NUM_CONSUMERS-1:0] mem_read_valid,
+    output reg [NUM_CHANNELS-1:0] mem_read_valid,
     output reg [ADDR_BITS-1:0] mem_read_address [NUM_CHANNELS-1:0],
-    input reg [NUM_CONSUMERS-1:0] mem_read_ready,
+    input reg [NUM_CHANNELS-1:0] mem_read_ready,
     input reg [DATA_BITS-1:0] mem_read_data [NUM_CHANNELS-1:0],
-    output reg [NUM_CONSUMERS-1:0] mem_write_valid,
+    output reg [NUM_CHANNELS-1:0] mem_write_valid,
     output reg [ADDR_BITS-1:0] mem_write_address [NUM_CHANNELS-1:0],
     output reg [DATA_BITS-1:0] mem_write_data [NUM_CHANNELS-1:0],
-    input reg [NUM_CONSUMERS-1:0] mem_write_ready
+    input reg [NUM_CHANNELS-1:0] mem_write_ready
 );
     localparam IDLE = 3'b000,
-            READ_WAITING=3'b001,
-            WRITE_WAITING=3'b010,
-            READ_RELAYING=3'b011,
-            WRITE_RELAYING=3'b100;
+            READ_WAITING=3'b010,
+            WRITE_WAITING=3'b011,
+            READ_RELAYING=3'b100,
+            WRITE_RELAYING=3'b101;
 
-    reg [2:0] controller_state [NUM_CONSUMERS-1:0];
+    reg [2:0] controller_state [NUM_CHANNELS-1:0];
     reg [$clog2(NUM_CONSUMERS)-1:0] current_consumer [NUM_CHANNELS-1:0];
     reg [NUM_CONSUMERS-1:0] channel_serving_consumer;
 
@@ -50,12 +50,12 @@ module controller #(
             mem_write_address<=0;
             mem_write_data<=0;
 
-            consumer_read_ready<=0,
-            consumer_read_data<=0,
-            consumer_write_ready<=0,
+            consumer_read_ready<=0;
+            consumer_read_data<=0;
+            consumer_write_ready<=0;
 
-            current_consumer<=0,
-            controller_state<=0,
+            current_consumer<=0;
+            controller_state<=0;
 
             channel_serving_consumer<=0;
         end
@@ -105,7 +105,7 @@ module controller #(
                 end
 
                 READ_RELAYING:begin
-                    if(consumer_read_valid[current_consumer[i]]) begin
+                    if(!consumer_read_valid[current_consumer[i]]) begin
                         consumer_read_ready[current_consumer[i]]=0;
                         channel_serving_consumer[current_consumer[i]]<=0;
                         controller_state[i]<=IDLE;
@@ -113,7 +113,7 @@ module controller #(
                 end
 
                 WRITE_RELAYING:begin
-                    if(consumer_write_valid[current_consumer[i]]) begin
+                    if(!consumer_write_valid[current_consumer[i]]) begin
                         consumer_write_ready[current_consumer[i]]=0;
                         channel_serving_consumer[current_consumer[i]]<=0;
                         controller_state[i]<=IDLE;

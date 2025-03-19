@@ -41,7 +41,7 @@ module dispatch#(
 
             for(int i=0;i<NUM_CORES;i=i+1) begin
                 core_start[i]<=0;
-                core_reset[i]<=0;
+                core_reset[i]<=1;
                 core_block_id[i]<=0;
                 core_thread_count[i]<=THREADS_PER_BLOCK;
             end

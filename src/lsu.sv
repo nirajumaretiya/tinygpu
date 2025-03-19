@@ -14,7 +14,7 @@ module lsu(
     input reg [2:0] core_state,
 
     //decoded signals for memory control
-    input reg decoded_mem_read_enalbe,
+    input reg decoded_mem_read_enable,
     input reg decoded_mem_write_enable,
 
     input reg [7:0] rs,
@@ -50,7 +50,7 @@ module lsu(
         end
         else if(enable) begin
             // If memory read is enabled(LDR operation)
-            if(decoded_mem_read_enalbe) begin
+            if(decoded_mem_read_enable) begin
                 case(lsu_state)
                 IDLE: begin
                     // When core_state=REQUEST  
@@ -99,7 +99,7 @@ module lsu(
                 end
 
                 WAITING: begin
-                    if(mem_write_ready==1) begin
+                    if(mem_write_ready) begin
                         mem_write_valid<=0;
                         lsu_state<=DONE;
                     end

@@ -1,0 +1,8 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1742405755" />
+    <testcase name="test_matadd" classname="test.test_matadd" file="/home/niraj/tinygpu/test/test_matadd.py" lineno="8" time="5.275885105133057" sim_time_ns="53850000.0" ratio_time="10206818.178737028">
+      <failure message="Test failed with RANDOM_SEED=1742405755" />
+    </testcase>
+  </testsuite>
+</testsuites>

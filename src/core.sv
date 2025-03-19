@@ -21,7 +21,7 @@ module core #(
 
     // program memory interface
     output reg program_mem_read_valid,
-    output reg [PROFRAM_MEM_ADDR_BITS-1:0] program_mem_read_address,
+    output reg [PROGRAM_MEM_ADDR_BITS-1:0] program_mem_read_address,
     input reg program_mem_read_ready,
     input reg [PROGRAM_MEM_DATA_BITS-1:0] program_mem_read_data,
 
@@ -33,7 +33,7 @@ module core #(
     output reg [THREADS_PER_BLOCK-1:0] data_mem_write_valid,
     output reg [DATA_MEM_ADDR_BITS-1:0] data_mem_write_address [THREADS_PER_BLOCK-1:0],
     output reg [DATA_MEM_DATA_BITS-1:0] data_mem_write_data [THREADS_PER_BLOCK-1:0],
-    input reg [THREADS_PER_BLOCK-1:0] data_mem_write_ready,
+    input reg [THREADS_PER_BLOCK-1:0] data_mem_write_ready
 );
     //core state
     reg [2:0] core_state;
@@ -69,7 +69,7 @@ module core #(
 
     //fetcher
     fetcher  #(
-        .PROGRAM_MEM_ADDR_BITS(PROFRAM_MEM_ADDR_BITS),
+        .PROGRAM_MEM_ADDR_BITS(PROGRAM_MEM_ADDR_BITS),
         .PROGRAM_MEM_DATA_BITS(PROGRAM_MEM_DATA_BITS)
     ) fetcher_i (
         .clk(clk),
@@ -130,7 +130,7 @@ module core #(
         for(i=0;i<THREADS_PER_BLOCK;i=i+1) begin: threads
            
            //ALU
-           alu alu_inst(
+           alu alu_instance(
             .clk(clk),
             .reset(reset),
             .enable(i<thread_count),
