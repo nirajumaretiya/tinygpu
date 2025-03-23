@@ -138,3 +138,53 @@ ADD R7, R3, R0                 ; Compute address for C[i]
 STR R7, R6                     ; Store result in Matrix C
 
 RET                            ; End of kernel
+
+
+### Matrix Multiplication
+This kernel multiplies two 2x2 matrices. It computes the dot product for each element of the resultant matrix using a loop implemented with branching instructions.
+
+```asm
+.threads 4
+.data 1 2 3 4                  ; Matrix A (2 x 2)
+.data 1 2 3 4                  ; Matrix B (2 x 2)
+
+MUL R0, %blockIdx, %blockDim
+ADD R0, R0, %threadIdx         ; i = blockIdx * blockDim + threadIdx
+
+CONST R1, #1                   ; Increment value
+CONST R2, #2                   ; N (inner dimension)
+CONST R3, #0                   ; Base address for Matrix A
+CONST R4, #4                   ; Base address for Matrix B
+CONST R5, #8                   ; Base address for Matrix C
+
+DIV R6, R0, R2                 ; row = i // N
+MUL R7, R6, R2
+SUB R7, R0, R7                 ; col = i % N
+
+CONST R8, #0                   ; Accumulator
+CONST R9, #0                   ; Loop counter (k)
+
+LOOP:
+  MUL R10, R6, R2
+  ADD R10, R10, R9
+  ADD R10, R10, R3             ; Address for A[row * N + k]
+  LDR R10, R10                 ; Load element from Matrix A
+
+  MUL R11, R9, R2
+  ADD R11, R11, R7
+  ADD R11, R11, R4             ; Address for B[k * N + col]
+  LDR R11, R11                 ; Load element from Matrix B
+
+  MUL R12, R10, R11
+  ADD R8, R8, R12              ; Accumulate the product
+
+  ADD R9, R9, R1               ; Increment k
+
+  CMP R9, R2
+  BRn LOOP                     ; Continue loop while k < N
+
+ADD R9, R5, R0                 ; Compute address for C[i]
+STR R9, R8                     ; Store computed value in Matrix C
+
+RET                            ; End of kernel
+
