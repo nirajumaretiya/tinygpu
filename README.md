@@ -18,9 +18,7 @@ Built with fewer than 15 fully documented Verilog files, tiny-gpu includes compl
 - [Kernels](#kernels)
   - [Matrix Addition](#matrix-addition)
   - [Matrix Multiplication](#matrix-multiplication)
-- [Simulation](#simulation)
-- [Advanced Functionality](#advanced-functionality)
-- [Next Steps](#next-steps)
+
 
 ## Overview
 
