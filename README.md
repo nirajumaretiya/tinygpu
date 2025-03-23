@@ -1,5 +1,8 @@
 # tinygpu
 
+> 🚀 *Originally created by [davidwmerrill](https://github.com/adam-maj/tiny-gpu). This is a cloned and slightly customized version by [adam-maj](https://github.com/adam-maj). Huge shoutout to the original project for making GPU architecture so approachable!*
+
+
 A minimal GPU implementation in Verilog optimized for learning how GPUs work from the ground up.
 
 Built with fewer than 15 fully documented Verilog files, tinygpu includes complete documentation on its architecture and ISA, working kernels for matrix addition and multiplication, and full support for kernel simulation with detailed execution traces.
