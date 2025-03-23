@@ -1,13 +1,22 @@
 # tinygpu
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Verilog](https://img.shields.io/badge/Verilog-2001-orange.svg)](https://en.wikipedia.org/wiki/Verilog)
+[![Documentation](https://img.shields.io/badge/docs-latest-green.svg)](https://github.com/adam-maj/tiny-gpu/wiki)
+
 > 🚀 *Originally created by [Adam Majmudar](https://github.com/adam-maj/tiny-gpu). This is a cloned and slightly customized version by [adam-maj](https://github.com/adam-maj). Huge shoutout to the original project for making GPU architecture so approachable!*
 
+A minimal GPU implementation in Verilog optimized for learning how GPUs work from the ground up. Built with fewer than 15 fully documented Verilog files, tinygpu includes complete documentation on its architecture and ISA, working kernels for matrix addition and multiplication, and full support for kernel simulation with detailed execution traces.
 
-A minimal GPU implementation in Verilog optimized for learning how GPUs work from the ground up.
+## 🌟 Features
 
-Built with fewer than 15 fully documented Verilog files, tinygpu includes complete documentation on its architecture and ISA, working kernels for matrix addition and multiplication, and full support for kernel simulation with detailed execution traces.
+- **Simplified Architecture**: Learn GPU fundamentals without production-grade complexities
+- **Complete Documentation**: Detailed explanations of architecture, ISA, and execution flow
+- **Working Examples**: Ready-to-use kernels for matrix operations
+- **Simulation Support**: Detailed execution traces for debugging and learning
+- **Educational Focus**: Perfect for understanding GPU internals
 
-## Table of Contents
+## 📚 Table of Contents
 
 - [Overview](#overview)
 - [Architecture](#architecture)
@@ -21,7 +30,8 @@ Built with fewer than 15 fully documented Verilog files, tinygpu includes comple
 - [Kernels](#kernels)
   - [Matrix Addition](#matrix-addition)
   - [Matrix Multiplication](#matrix-multiplication)
-
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
 
 ## Overview
 
@@ -72,8 +82,8 @@ Each compute core is responsible for executing one block of threads at a time. E
 - **Scheduler:** Coordinates the execution of all threads in a block sequentially and in lockstep. Although the scheduling is simplified, it demonstrates the key principles of parallel execution.
 - **Fetcher:** Asynchronously retrieves instructions from program memory (or cache, when available).
 - **Decoder:** Converts fetched instructions into a set of control signals for execution.
-- **Register Files:** Store each thread’s working data, including three special read-only registers (`%blockIdx`, `%blockDim`, and `%threadIdx`) critical for SIMD operations.
-- **ALUs:** Each thread’s arithmetic logic unit performs basic arithmetic operations (`ADD`, `SUB`, `MUL`, `DIV`) and comparisons (`CMP`).
+- **Register Files:** Store each thread's working data, including three special read-only registers (`%blockIdx`, `%blockDim`, and `%threadIdx`) critical for SIMD operations.
+- **ALUs:** Each thread's arithmetic logic unit performs basic arithmetic operations (`ADD`, `SUB`, `MUL`, `DIV`) and comparisons (`CMP`).
 - **LSUs:** Handle asynchronous load (`LDR`) and store (`STR`) operations to global memory.
 - **PC Units:** Maintain individual program counters for threads and manage branching with instructions like `BRnzp`.
 
@@ -86,7 +96,7 @@ tinygpu implements a concise 11-instruction ISA to support simple kernels. The i
 - **ADD, SUB, MUL, DIV:** Basic arithmetic operations.
 - **LDR, STR:** Load and store data to/from global memory.
 - **CONST:** Load a constant value into a register.
-- **RET:** Indicates the end of a thread’s execution.
+- **RET:** Indicates the end of a thread's execution.
 
 Each register is specified with 4 bits, providing 16 registers per thread. Registers R0 to R12 are general-purpose, while the last 3 are dedicated to SIMD functionality.
 
@@ -191,3 +201,54 @@ STR R9, R8                     ; Store computed value in Matrix C
 
 RET                            ; End of kernel
 ```
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Verilog simulator (e.g., Icarus Verilog)
+- Basic understanding of digital design
+- Familiarity with assembly programming
+
+### Installation
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/tinygpu.git
+cd tinygpu
+```
+
+2. Set up your Verilog environment:
+```bash
+# Example for Ubuntu/Debian
+sudo apt-get install iverilog
+```
+
+### Running Examples
+1. Compile the Verilog files:
+```bash
+iverilog -o tinygpu_tb tinygpu_tb.v
+```
+
+2. Run the simulation:
+```bash
+vvp tinygpu_tb
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Original project by [Adam Majmudar](https://github.com/adam-maj/tiny-gpu)
+- All contributors who have helped improve this project
+- The open-source hardware community for their valuable feedback and suggestions
