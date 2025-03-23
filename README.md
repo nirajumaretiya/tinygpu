@@ -138,7 +138,7 @@ ADD R7, R3, R0                 ; Compute address for C[i]
 STR R7, R6                     ; Store result in Matrix C
 
 RET                            ; End of kernel
-
+```
 
 ### Matrix Multiplication
 This kernel multiplies two 2x2 matrices. It computes the dot product for each element of the resultant matrix using a loop implemented with branching instructions.
@@ -187,4 +187,4 @@ ADD R9, R5, R0                 ; Compute address for C[i]
 STR R9, R8                     ; Store computed value in Matrix C
 
 RET                            ; End of kernel
-
+```
