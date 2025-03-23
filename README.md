@@ -1,8 +1,8 @@
-# tiny-gpu
+# tinygpu
 
 A minimal GPU implementation in Verilog optimized for learning how GPUs work from the ground up.
 
-Built with fewer than 15 fully documented Verilog files, tiny-gpu includes complete documentation on its architecture and ISA, working kernels for matrix addition and multiplication, and full support for kernel simulation with detailed execution traces.
+Built with fewer than 15 fully documented Verilog files, tinygpu includes complete documentation on its architecture and ISA, working kernels for matrix addition and multiplication, and full support for kernel simulation with detailed execution traces.
 
 ## Table of Contents
 
@@ -22,7 +22,7 @@ Built with fewer than 15 fully documented Verilog files, tiny-gpu includes compl
 
 ## Overview
 
-Modern GPUs are notoriously complex. While many resources exist for GPU programming, very few explain the inner hardware details. **tiny-gpu** is designed as an educational tool to help you understand GPU fundamentals by stripping away production-grade complexities. With tiny-gpu, you can learn:
+Modern GPUs are notoriously complex. While many resources exist for GPU programming, very few explain the inner hardware details. **tinygpu** is designed as an educational tool to help you understand GPU fundamentals by stripping away production-grade complexities. With tinygpu, you can learn:
 
 - **Architecture:** Discover the fundamental building blocks of a GPU.
 - **Parallelization:** Understand how the SIMD programming model is implemented in hardware.
@@ -34,7 +34,7 @@ This project provides a clear, minimalistic design that highlights the critical 
 
 ### GPU
 
-tiny-gpu is designed to execute one kernel at a time. The process of launching a kernel involves:
+tinygpu is designed to execute one kernel at a time. The process of launching a kernel involves:
 
 1. **Program Loading:** Load the global program memory with the kernel code.
 2. **Data Loading:** Load data memory with the necessary data.
@@ -51,7 +51,7 @@ The GPU comprises several key units:
 
 ### Memory
 
-tiny-gpu uses separate memories for data and program instructions:
+tinygpu uses separate memories for data and program instructions:
 
 - **Data Memory:**
   - 8-bit addressability (256 rows).
@@ -76,7 +76,7 @@ Each compute core is responsible for executing one block of threads at a time. E
 
 ## ISA
 
-tiny-gpu implements a concise 11-instruction ISA to support simple kernels. The instructions include:
+tinygpu implements a concise 11-instruction ISA to support simple kernels. The instructions include:
 
 - **BRnzp:** Conditional branch based on the NZP register flags.
 - **CMP:** Compares two registers and sets the NZP flag based on the result.
@@ -108,7 +108,7 @@ Each thread follows the same six-step sequence, maintaining its own set of regis
 
 ## Kernels
 
-tiny-gpu includes example kernels that demonstrate its capabilities. Two key examples are provided:
+tinygpu includes example kernels that demonstrate its capabilities. Two key examples are provided:
 
 ### Matrix Addition
 
