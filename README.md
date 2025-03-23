@@ -2,7 +2,7 @@
 
 A minimal GPU implementation in Verilog optimized for learning how GPUs work from the ground up.
 
-Built with fewer than 15 files of fully documented Verilog code, complete architecture & ISA documentation, working matrix addition/multiplication kernels, and full support for kernel simulation & execution traces.
+Built with fewer than 15 fully documented Verilog files, tiny-gpu includes complete documentation on its architecture and ISA, working kernels for matrix addition and multiplication, and full support for kernel simulation with detailed execution traces.
 
 ## Table of Contents
 
@@ -19,101 +19,102 @@ Built with fewer than 15 files of fully documented Verilog code, complete archit
   - [Matrix Addition](#matrix-addition)
   - [Matrix Multiplication](#matrix-multiplication)
 - [Simulation](#simulation)
+- [Advanced Functionality](#advanced-functionality)
 - [Next Steps](#next-steps)
 
 ## Overview
 
-Modern GPUs are complex pieces of hardware, and while many resources exist on GPU programming, very few explain the hardware details. **tiny-gpu** is designed as an educational tool that simplifies GPU design and operation, stripping away the extra layers of production complexity to focus on core principles:
+Modern GPUs are notoriously complex. While many resources exist for GPU programming, very few explain the inner hardware details. **tiny-gpu** is designed as an educational tool to help you understand GPU fundamentals by stripping away production-grade complexities. With tiny-gpu, you can learn:
 
-- **Architecture** – Understand the building blocks of a GPU.
-- **Parallelization** – Learn how SIMD programming is implemented in hardware.
-- **Memory** – See how GPUs manage limited memory bandwidth with dedicated controllers and caching.
+- **Architecture:** Discover the fundamental building blocks of a GPU.
+- **Parallelization:** Understand how the SIMD programming model is implemented in hardware.
+- **Memory Management:** Learn about the techniques used to handle limited memory bandwidth through dedicated controllers and caching.
 
-By studying tiny-gpu, you’ll gain a deeper insight into the basic elements that underlie both traditional GPUs and modern ML accelerators.
+This project provides a clear, minimalistic design that highlights the critical components common to both traditional GPUs and modern ML accelerators.
 
 ## Architecture
 
 ### GPU
 
-tiny-gpu executes a single kernel at a time. To launch a kernel, the following steps occur:
+tiny-gpu is designed to execute one kernel at a time. The process of launching a kernel involves:
 
-1. Global program memory is loaded with kernel code.
-2. Data memory is loaded with necessary data.
-3. The device control register is set with the number of threads for the kernel.
-4. The kernel is launched by activating the start signal.
+1. **Program Loading:** Load the global program memory with the kernel code.
+2. **Data Loading:** Load data memory with the necessary data.
+3. **Thread Specification:** Specify the total number of threads to launch via the device control register.
+4. **Kernel Launch:** Start the kernel execution by setting the start signal.
 
-The GPU consists of several units:
+The GPU comprises several key units:
 
-- **Device Control Register:** Holds metadata like `thread_count` which defines the number of threads to launch.
-- **Dispatcher:** Organizes threads into blocks and dispatches them to available compute cores. It monitors kernel execution and signals when the job is done.
-- **Compute Cores:** Execute the kernels using dedicated resources for each thread.
-- **Memory Controllers:** Manage data and program memory accesses.
-- **Cache:** Stores frequently accessed data to reduce the cost of repeated global memory access.
+- **Device Control Register:** Stores metadata (like `thread_count`) that determines how many threads to launch.
+- **Dispatcher:** Groups threads into blocks and distributes them to compute cores. It manages block execution and signals when the kernel has finished.
+- **Compute Cores:** Execute the kernel instructions using dedicated resources for each thread.
+- **Memory Controllers:** Manage access to the external global data and program memories.
+- **Cache:** Stores frequently accessed data to reduce costly repeated accesses to external memory.
 
 ### Memory
 
-The GPU interfaces with separate global memories for data and program instructions.
+tiny-gpu uses separate memories for data and program instructions:
 
-- **Data Memory:** 
+- **Data Memory:**
   - 8-bit addressability (256 rows).
-  - 8-bit data per row.
-- **Program Memory:** 
+  - Each row holds 8 bits of data.
+- **Program Memory:**
   - 8-bit addressability (256 rows).
-  - 16-bit instructions, as defined by the ISA.
+  - Each instruction is 16 bits, conforming to the ISA.
 
-Memory controllers handle the bandwidth constraints by managing requests between the compute cores and the external memories.
+Memory controllers balance the load between compute cores and external memory by managing request traffic and ensuring bandwidth limitations are respected.
 
 ### Core
 
-Each compute core processes one block at a time. Every thread within a block is equipped with its own ALU, LSU, PC, and register file. Core components include:
+Each compute core is responsible for executing one block of threads at a time. Every thread within a block is equipped with its own set of components:
 
-- **Scheduler:** Executes all threads in a block in lockstep. Although simple, it effectively demonstrates the principles of parallel execution.
-- **Fetcher:** Retrieves instructions from program memory.
-- **Decoder:** Translates instructions into control signals.
-- **Register Files:** Store each thread’s working data, including special read-only registers (`%blockIdx`, `%blockDim`, `%threadIdx`) used for SIMD programming.
-- **ALUs:** Perform arithmetic and logic operations.
-- **LSUs:** Handle global memory load and store operations.
-- **PC Units:** Maintain the program counter for each thread and manage branching using the `BRnzp` instruction.
+- **Scheduler:** Coordinates the execution of all threads in a block sequentially and in lockstep. Although the scheduling is simplified, it demonstrates the key principles of parallel execution.
+- **Fetcher:** Asynchronously retrieves instructions from program memory (or cache, when available).
+- **Decoder:** Converts fetched instructions into a set of control signals for execution.
+- **Register Files:** Store each thread’s working data, including three special read-only registers (`%blockIdx`, `%blockDim`, and `%threadIdx`) critical for SIMD operations.
+- **ALUs:** Each thread’s arithmetic logic unit performs basic arithmetic operations (`ADD`, `SUB`, `MUL`, `DIV`) and comparisons (`CMP`).
+- **LSUs:** Handle asynchronous load (`LDR`) and store (`STR`) operations to global memory.
+- **PC Units:** Maintain individual program counters for threads and manage branching with instructions like `BRnzp`.
 
 ## ISA
 
-tiny-gpu features a concise 11-instruction ISA, supporting essential operations for kernel execution. The instructions include:
+tiny-gpu implements a concise 11-instruction ISA to support simple kernels. The instructions include:
 
-- **BRnzp:** Conditional branch based on the NZP register.
-- **CMP:** Compares two registers and sets the NZP flag.
+- **BRnzp:** Conditional branch based on the NZP register flags.
+- **CMP:** Compares two registers and sets the NZP flag based on the result.
 - **ADD, SUB, MUL, DIV:** Basic arithmetic operations.
-- **LDR, STR:** Load and store data from global memory.
-- **CONST:** Load an immediate constant into a register.
-- **RET:** Indicates the end of a thread's execution.
+- **LDR, STR:** Load and store data to/from global memory.
+- **CONST:** Load a constant value into a register.
+- **RET:** Indicates the end of a thread’s execution.
 
-Registers are 4 bits wide, providing 16 registers per thread; registers `R0`–`R12` are general-purpose, and the last 3 are dedicated to the SIMD registers.
+Each register is specified with 4 bits, providing 16 registers per thread. Registers R0 to R12 are general-purpose, while the last 3 are dedicated to SIMD functionality.
 
 ## Execution
 
 ### Core
 
-Each compute core processes instructions through a six-step control flow:
+Each compute core processes instructions through a six-step pipeline:
 
-1. **FETCH:** Retrieve the next instruction using the current program counter.
-2. **DECODE:** Convert the instruction into control signals.
-3. **REQUEST:** Issue memory requests if needed (for LDR/STR).
-4. **WAIT:** Handle asynchronous memory responses.
-5. **EXECUTE:** Perform arithmetic or logical computations.
-6. **UPDATE:** Update the register files and NZP flag.
+1. **FETCH:** Retrieve the instruction at the current program counter.
+2. **DECODE:** Convert the fetched instruction into control signals.
+3. **REQUEST:** Issue memory access requests (for LDR/STR operations).
+4. **WAIT:** Await responses for asynchronous memory operations.
+5. **EXECUTE:** Perform the required arithmetic or logical operations.
+6. **UPDATE:** Write back results to register files and update the NZP flag.
 
-This step-by-step approach emphasizes clarity over optimization.
+This detailed control flow makes it easier to understand how GPUs manage and execute instructions.
 
 ### Thread
 
-Each thread follows the same six-step execution cycle, using its own register file to hold data. The dedicated read-only registers for `%blockIdx`, `%blockDim`, and `%threadIdx` facilitate SIMD operations across threads.
+Each thread follows the same six-step sequence, maintaining its own set of registers. The inclusion of the special read-only registers (`%blockIdx`, `%blockDim`, `%threadIdx`) enables parallel execution under the SIMD paradigm.
 
 ## Kernels
 
-The repository includes two example kernels to illustrate the functionality of tiny-gpu.
+tiny-gpu includes example kernels that demonstrate its capabilities. Two key examples are provided:
 
 ### Matrix Addition
 
-The matrix addition kernel performs element-wise addition on two 1x8 matrices using separate threads. It leverages the SIMD registers to calculate the index and uses LDR/STR for memory operations.
+This kernel performs element-wise addition on two 1x8 matrices. Each thread computes the sum of corresponding elements from two matrices.
 
 ```asm
 .threads 8
@@ -136,6 +137,6 @@ LDR R5, R5                     ; Load B[i]
 ADD R6, R4, R5                 ; Compute C[i] = A[i] + B[i]
 
 ADD R7, R3, R0                 ; Compute address for C[i]
-STR R7, R6                     ; Store C[i]
+STR R7, R6                     ; Store result in Matrix C
 
 RET                            ; End of kernel
