@@ -12,6 +12,8 @@
   <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=2D9EF7&center=true&vCenter=true&width=435&lines=A+minimal+GPU+implementation+in+Verilog;Optimized+for+learning+GPU+fundamentals" alt="Typing SVG" />
 </div>
 
+A minimal GPU implementation in Verilog optimized for learning how GPUs work from the ground up. Built with fewer than 15 fully documented Verilog files, tinygpu includes complete documentation on its architecture and ISA, working kernels for matrix addition and multiplication, and full support for kernel simulation with detailed execution traces.
+
 ## 🌟 Features
 
 <table>
@@ -52,7 +54,74 @@
   </table>
 </div>
 
-// ... existing code ...
+## Overview
+
+Modern GPUs are notoriously complex. While many resources exist for GPU programming, very few explain the inner hardware details. **tinygpu** is designed as an educational tool to help you understand GPU fundamentals by stripping away production-grade complexities. With tinygpu, you can learn:
+
+<table>
+  <tr>
+    <td align="center">🏗️ <b>Architecture</b></td>
+    <td align="center">🔄 <b>Parallelization</b></td>
+    <td align="center">💾 <b>Memory Management</b></td>
+  </tr>
+  <tr>
+    <td>Discover the fundamental building blocks of a GPU</td>
+    <td>Understand how the SIMD programming model is implemented in hardware</td>
+    <td>Learn about techniques for handling limited memory bandwidth</td>
+  </tr>
+</table>
+
+This project provides a clear, minimalistic design that highlights the critical components common to both traditional GPUs and modern ML accelerators.
+
+## Architecture
+
+### GPU
+
+tinygpu is designed to execute one kernel at a time. The process of launching a kernel involves:
+
+<div align="center">
+  <table>
+    <tr>
+      <td>1️⃣ <b>Program Loading</b></td>
+      <td>2️⃣ <b>Data Loading</b></td>
+    </tr>
+    <tr>
+      <td>Load kernel code into global program memory</td>
+      <td>Load necessary data into data memory</td>
+    </tr>
+    <tr>
+      <td>3️⃣ <b>Thread Specification</b></td>
+      <td>4️⃣ <b>Kernel Launch</b></td>
+    </tr>
+    <tr>
+      <td>Specify total threads via device control register</td>
+      <td>Start execution by setting the start signal</td>
+    </tr>
+  </table>
+</div>
+
+The GPU comprises several key units:
+
+<table>
+  <tr>
+    <td align="center">⚙️ <b>Device Control Register</b></td>
+    <td align="center">🔄 <b>Dispatcher</b></td>
+    <td align="center">💻 <b>Compute Cores</b></td>
+  </tr>
+  <tr>
+    <td>Stores metadata for thread management</td>
+    <td>Groups and distributes threads to cores</td>
+    <td>Executes kernel instructions per thread</td>
+  </tr>
+  <tr>
+    <td align="center">💾 <b>Memory Controllers</b></td>
+    <td align="center">📦 <b>Cache</b></td>
+  </tr>
+  <tr>
+    <td>Manages access to global memories</td>
+    <td>Reduces repeated memory accesses</td>
+  </tr>
+</table>
 
 ## 🚀 Getting Started
 
@@ -70,7 +139,7 @@
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/tinygpu.git
+git clone https://github.com/nirajumaretiya/tinygpu.git
 cd tinygpu
 
 # Set up your Verilog environment (Ubuntu/Debian)
@@ -128,5 +197,5 @@ vvp tinygpu_tb
 ---
 
 <div align="center">
-  <img src="https://komarev.com/ghpvc/?username=yourusername&color=blueviolet" alt="Profile Views"/>
+  <img src="https://komarev.com/ghpvc/?username=nirajumaretiya&color=blueviolet" alt="Profile Views"/>
 </div>
