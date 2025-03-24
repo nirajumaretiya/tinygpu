@@ -212,7 +212,7 @@ RET                            ; End of kernel
 ### Installation
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/tinygpu.git
+git clone https://github.com/nirajumaretiya/tinygpu.git
 cd tinygpu
 ```
 
