@@ -202,19 +202,6 @@ STR R9, R8                     ; Store computed value in Matrix C
 RET                            ; End of kernel
 ```
 
-// ... existing code ...
-
-### Running Examples
-1. Compile the Verilog files:
-```bash
-iverilog -o tinygpu_tb tinygpu_tb.v
-```
-
-2. Run the simulation:
-```bash
-vvp tinygpu_tb
-```
-
 ## 🔄 Simulation
 
 tiny-gpu is setup to simulate the execution of both matrix addition and multiplication kernels. Here's how to get started:
@@ -236,7 +223,7 @@ tiny-gpu is setup to simulate the execution of both matrix addition and multipli
 </div>
 
 ### Setup
-```bash
+bash
 # Download and setup sv2v
 # 1. Download the latest version from https://github.com/zachjs/sv2v/releases
 # 2. Unzip it
@@ -244,17 +231,16 @@ tiny-gpu is setup to simulate the execution of both matrix addition and multipli
 
 # Create build directory
 mkdir build
-```
+
 
 ### Running Simulations
 You can run the kernel simulations using:
-```bash
+bash
 # For matrix addition
 make test_matadd
 
 # For matrix multiplication
 make test_matmul
-```
 
 ### Output
 The simulations will generate log files in `test/logs` containing:
@@ -285,9 +271,8 @@ The execution traces show detailed information for each cycle:
 - Core execution status
 
 ### Need Help?
-If you run into any issues while setting up or running the simulations, feel free to reach out on Twitter - we want you to get this running!
+If you run into any issues while setting up or running the simulations, feel free to reach out on linkdin - we want you to get this running!
 
-// ... rest of existing code ...
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
