@@ -202,25 +202,7 @@ STR R9, R8                     ; Store computed value in Matrix C
 RET                            ; End of kernel
 ```
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Verilog simulator (e.g., Icarus Verilog)
-- Basic understanding of digital design
-- Familiarity with assembly programming
-
-### Installation
-1. Clone the repository:
-```bash
-git clone https://github.com/nirajumaretiya/tinygpu.git
-cd tinygpu
-```
-
-2. Set up your Verilog environment:
-```bash
-# Example for Ubuntu/Debian
-sudo apt-get install iverilog
-```
+// ... existing code ...
 
 ### Running Examples
 1. Compile the Verilog files:
@@ -233,6 +215,79 @@ iverilog -o tinygpu_tb tinygpu_tb.v
 vvp tinygpu_tb
 ```
 
+## 🔄 Simulation
+
+tiny-gpu is setup to simulate the execution of both matrix addition and multiplication kernels. Here's how to get started:
+
+### Prerequisites
+<div align="center">
+  <table>
+    <tr>
+      <td>🔧 Install Verilog compilers</td>
+      <td>🐍 Install cocotb</td>
+      <td>🔄 Download sv2v</td>
+    </tr>
+    <tr>
+      <td><code>brew install icarus-verilog</code></td>
+      <td><code>pip3 install cocotb</code></td>
+      <td>Download from <a href="https://github.com/zachjs/sv2v/releases">sv2v releases</a></td>
+    </tr>
+  </table>
+</div>
+
+### Setup
+```bash
+# Download and setup sv2v
+# 1. Download the latest version from https://github.com/zachjs/sv2v/releases
+# 2. Unzip it
+# 3. Add the binary to your $PATH
+
+# Create build directory
+mkdir build
+```
+
+### Running Simulations
+You can run the kernel simulations using:
+```bash
+# For matrix addition
+make test_matadd
+
+# For matrix multiplication
+make test_matmul
+```
+
+### Output
+The simulations will generate log files in `test/logs` containing:
+- Initial data memory state
+- Complete execution trace of the kernel
+- Final data memory state
+
+<div align="center">
+  <table>
+    <tr>
+      <td>📊 Initial State</td>
+      <td>🔄 Execution Trace</td>
+      <td>📊 Final State</td>
+    </tr>
+    <tr>
+      <td>Input matrices</td>
+      <td>Per-cycle execution details</td>
+      <td>Resultant matrix</td>
+    </tr>
+  </table>
+</div>
+
+The execution traces show detailed information for each cycle:
+- Current instruction
+- Program Counter (PC)
+- Register values
+- Thread states
+- Core execution status
+
+### Need Help?
+If you run into any issues while setting up or running the simulations, feel free to reach out on Twitter - we want you to get this running!
+
+// ... rest of existing code ...
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
