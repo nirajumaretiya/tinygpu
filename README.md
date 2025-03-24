@@ -236,13 +236,14 @@ mkdir build
 
 ### Running Simulations
 You can run the kernel simulations using:
+```
 bash
 # For matrix addition
 make test_matadd
 
 # For matrix multiplication
 make test_matmul
-
+```
 ### Output
 The simulations will generate log files in `test/logs` containing:
 - Initial data memory state
