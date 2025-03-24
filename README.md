@@ -223,6 +223,7 @@ tiny-gpu is setup to simulate the execution of both matrix addition and multipli
 </div>
 
 ### Setup
+```
 bash
 # Download and setup sv2v
 # 1. Download the latest version from https://github.com/zachjs/sv2v/releases
@@ -231,7 +232,7 @@ bash
 
 # Create build directory
 mkdir build
-
+```
 
 ### Running Simulations
 You can run the kernel simulations using:
