@@ -1,0 +1,15 @@
+# Generated build artifacts
+build/
+sim_build/
+dump.vcd
+results.xml
+
+# Local Verilator tool tree (vendored)
+verilator/
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+
+# Test logs
+test/logs/

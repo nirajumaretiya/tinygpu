@@ -92,7 +92,7 @@ module lsu(
                 end
 
                 REQUESTING: begin
-                    mem_read_valid<=1;
+                    mem_write_valid<=1;
                     mem_write_address<=rs;
                     mem_write_data<=rt;
                     lsu_state<=WAITING;    

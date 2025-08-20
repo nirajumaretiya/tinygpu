@@ -44,18 +44,26 @@ module controller #(
     always@(posedge clk) begin
         if(reset) begin
             mem_read_valid<=0;
-            mem_read_address<=0;
+            for (int i = 0; i < NUM_CHANNELS; i = i + 1) begin
+                mem_read_address[i] <= '0;
+            end
 
             mem_write_valid<=0;
-            mem_write_address<=0;
-            mem_write_data<=0;
+            for (int i = 0; i < NUM_CHANNELS; i = i + 1) begin
+                mem_write_address[i] <= '0;
+                mem_write_data[i] <= '0;
+            end
 
             consumer_read_ready<=0;
-            consumer_read_data<=0;
+            for (int j = 0; j < NUM_CONSUMERS; j = j + 1) begin
+                consumer_read_data[j] <= '0;
+            end
             consumer_write_ready<=0;
 
-            current_consumer<=0;
-            controller_state<=0;
+            for (int i = 0; i < NUM_CHANNELS; i = i + 1) begin
+                current_consumer[i] <= '0;
+                controller_state[i] <= IDLE;
+            end
 
             channel_serving_consumer<=0;
         end
@@ -66,8 +74,8 @@ module controller #(
                 IDLE: begin
                     for(int j=0;j<NUM_CONSUMERS;j=j+1) begin
                     if(consumer_read_valid[j] && !channel_serving_consumer[j]) begin
-                        channel_serving_consumer[j]=1;
-                        current_consumer[i]<=j;
+                        channel_serving_consumer[j]<=1;
+                        current_consumer[i]<=j[$clog2(NUM_CONSUMERS)-1:0];
 
                         mem_read_valid[i]<=1;
                         mem_read_address[i]<=consumer_read_address[j];
@@ -75,8 +83,8 @@ module controller #(
                         break;
                     end
                     else if(consumer_write_valid[j] && !channel_serving_consumer[j]) begin
-                        channel_serving_consumer[j]=1;
-                        current_consumer[i]<=j;
+                        channel_serving_consumer[j]<=1;
+                        current_consumer[i]<=j[$clog2(NUM_CONSUMERS)-1:0];
 
                         mem_write_valid[i]<=1;
                         mem_write_address[i]<=consumer_write_address[j];
@@ -106,7 +114,7 @@ module controller #(
 
                 READ_RELAYING:begin
                     if(!consumer_read_valid[current_consumer[i]]) begin
-                        consumer_read_ready[current_consumer[i]]=0;
+                        consumer_read_ready[current_consumer[i]]<=0;
                         channel_serving_consumer[current_consumer[i]]<=0;
                         controller_state[i]<=IDLE;
                     end
@@ -114,7 +122,7 @@ module controller #(
 
                 WRITE_RELAYING:begin
                     if(!consumer_write_valid[current_consumer[i]]) begin
-                        consumer_write_ready[current_consumer[i]]=0;
+                        consumer_write_ready[current_consumer[i]]<=0;
                         channel_serving_consumer[current_consumer[i]]<=0;
                         controller_state[i]<=IDLE;
                     end

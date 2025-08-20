@@ -81,7 +81,7 @@ module core #(
         .mem_read_ready(program_mem_read_ready),
         .mem_read_data(program_mem_read_data),
         .fetcher_state(fetcher_state),
-        .instruction(instruction),
+        .instruction(instruction)
     );
 
     //decoder
@@ -103,7 +103,7 @@ module core #(
         .decoded_alu_arithmetic_mux(decoded_alu_arithmetic_mux),
         .decoded_alu_output_mux(decoded_alu_output_mux),
         .decoded_pc_mux(decoded_pc_mux),
-        .decoded_ret(decoded_ret),
+        .decoded_ret(decoded_ret)
     );
 
     // scheduler
@@ -168,7 +168,7 @@ module core #(
             registers #(
                 .THREADS_PER_BLOCK(THREADS_PER_BLOCK),
                 .THREAD_ID(i),
-                .DATA_BITS(DATA_MEM_DATA_BITS),
+                .DATA_BITS(DATA_MEM_DATA_BITS)
             ) register_instance (
                 .clk(clk),
                 .reset(reset),

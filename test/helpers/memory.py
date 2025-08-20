@@ -22,14 +22,14 @@ class Memory:
             self.mem_write_ready = getattr(dut, f"{name}_mem_write_ready")
 
     def run(self):
-        mem_read_valid = [
-            int(str(self.mem_read_valid.value)[i:i+1], 2)
-            for i in range(0, len(str(self.mem_read_valid.value)), 1)
-        ]
+        # Interpret packed buses LSB-first to match Verilog [i*BITS +: BITS]
+        rv_int = int(self.mem_read_valid.value)
+        ra_int = int(self.mem_read_address.value)
 
+        mem_read_valid = [(rv_int >> ch) & 0x1 for ch in range(self.channels)]
         mem_read_address = [
-            int(str(self.mem_read_address.value)[i:i+self.addr_bits], 2)
-            for i in range(0, len(str(self.mem_read_address.value)), self.addr_bits)
+            (ra_int >> (ch * self.addr_bits)) & ((1 << self.addr_bits) - 1)
+            for ch in range(self.channels)
         ]
         mem_read_ready = [0] * self.channels
         mem_read_data = [0] * self.channels
@@ -41,21 +41,29 @@ class Memory:
             else:
                 mem_read_ready[i] = 0
 
-        self.mem_read_data.value = int(''.join(format(d, '0' + str(self.data_bits) + 'b') for d in mem_read_data), 2)
-        self.mem_read_ready.value = int(''.join(format(r, '01b') for r in mem_read_ready), 2)
+        # Pack back LSB-first
+        rd_val = 0
+        for ch in range(self.channels):
+            rd_val |= (mem_read_data[ch] & ((1 << self.data_bits) - 1)) << (ch * self.data_bits)
+        rr_val = 0
+        for ch in range(self.channels):
+            rr_val |= (mem_read_ready[ch] & 0x1) << ch
+        self.mem_read_data.value = rd_val
+        self.mem_read_ready.value = rr_val
 
         if self.name != "program":
-            mem_write_valid = [
-                int(str(self.mem_write_valid.value)[i:i+1], 2)
-                for i in range(0, len(str(self.mem_write_valid.value)), 1)
-            ]
+            wv_int = int(self.mem_write_valid.value)
+            wa_int = int(self.mem_write_address.value)
+            wd_int = int(self.mem_write_data.value)
+
+            mem_write_valid = [(wv_int >> ch) & 0x1 for ch in range(self.channels)]
             mem_write_address = [
-                int(str(self.mem_write_address.value)[i:i+self.addr_bits], 2)
-                for i in range(0, len(str(self.mem_write_address.value)), self.addr_bits)
+                (wa_int >> (ch * self.addr_bits)) & ((1 << self.addr_bits) - 1)
+                for ch in range(self.channels)
             ]
             mem_write_data = [
-                int(str(self.mem_write_data.value)[i:i+self.data_bits], 2)
-                for i in range(0, len(str(self.mem_write_data.value)), self.data_bits)
+                (wd_int >> (ch * self.data_bits)) & ((1 << self.data_bits) - 1)
+                for ch in range(self.channels)
             ]
             mem_write_ready = [0] * self.channels
 
@@ -66,7 +74,10 @@ class Memory:
                 else:
                     mem_write_ready[i] = 0
 
-            self.mem_write_ready.value = int(''.join(format(w, '01b') for w in mem_write_ready), 2)
+            wr_val = 0
+            for ch in range(self.channels):
+                wr_val |= (mem_write_ready[ch] & 0x1) << ch
+            self.mem_write_ready.value = wr_val
 
     def write(self, address, data):
         if address < len(self.memory):

@@ -61,7 +61,7 @@ module dispatch#(
 
             for(int i=0;i<NUM_CORES;i=i+1) begin
                 if(core_reset[i]) begin
-                    core_reset[i]=0;
+                    core_reset[i]<=0;
 
                     // if this core was just reset, check if there are more blocks to dispatched
                     if(blocks_dispatched<total_blocks) begin
@@ -69,7 +69,7 @@ module dispatch#(
                         core_block_id[i]<=blocks_dispatched;
                         core_thread_count[i]<=(blocks_dispatched==total_blocks-1)?(thread_count-(blocks_dispatched*THREADS_PER_BLOCK)):THREADS_PER_BLOCK;
 
-                        blocks_dispatched=blocks_dispatched+1;
+                        blocks_dispatched<=blocks_dispatched+1;
                     end
                 end
             end
@@ -79,7 +79,7 @@ module dispatch#(
                     // if a core just executed a block then reset it
                     core_reset[i]<=1;
                     core_start[i]<=0;
-                    blocks_done=blocks_done+1;
+                    blocks_done<=blocks_done+1;
                 end
             end
         end
